@@ -1,0 +1,1 @@
+export { CoaWxPayIsv } from './typings'
