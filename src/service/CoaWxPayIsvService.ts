@@ -24,7 +24,7 @@ export class CoaWxPayIsvService {
     const param: any = {
       appId: appWxaId,
       timeStamp: _.toString(_.toInteger(_.now() / 1000)),
-      nonceStr: this.bin.createNonceStr(),
+      nonceStr: this.bin.generateNonceString(),
       signType: 'MD5',
       package: 'prepay_id=' + prepayId,
     }
@@ -39,7 +39,7 @@ export class CoaWxPayIsvService {
     const param = {
       appid: this.bin.config.appId,
       mch_id: this.bin.config.mchId,
-      nonce_str: this.bin.createNonceStr(),
+      nonce_str: this.bin.generateNonceString(),
       sub_appid: data.appWxaId || die.missing('appWxaId'),
       sub_mch_id: data.subMchId || die.missing('subMchId'),
       sub_openid: data.openId || die.missing('openId'),
@@ -50,8 +50,8 @@ export class CoaWxPayIsvService {
       notify_url: `${this.bin.config.notifyPay}.${data.orderId}`,
       trade_type: 'JSAPI',
     }
-    const res = await this.bin.attachSignature(param)
-    return await this.bin.post('/pay/unifiedorder', res)
+    const body = await this.bin.toSignedXmlParams(param)
+    return await this.bin.post('/pay/unifiedorder', body)
   }
 
   // 退款
@@ -63,7 +63,7 @@ export class CoaWxPayIsvService {
     const param = {
       appid: this.bin.config.appId,
       mch_id: this.bin.config.mchId,
-      nonce_str: this.bin.createNonceStr(),
+      nonce_str: this.bin.generateNonceString(),
       sub_appid: rawData.subAppid || rawData.sub_appid || die.hint('缺少rawData.subAppid，暂时无法退款'),
       sub_mch_id: rawData.subMchId || rawData.sub_mch_id || die.hint('缺少rawData.subMchId，暂时无法退款'),
       out_trade_no: rawData.outTradeNo || rawData.out_trade_no || die.hint('缺少rawData.outTradeNo，暂时无法退款'),
@@ -72,8 +72,8 @@ export class CoaWxPayIsvService {
       refund_fee: price,
       notify_url: `${this.bin.config.notifyRefund}.${orderId}`
     }
-    const res = await this.bin.attachSignature(param)
-    return await this.bin.post('/secapi/pay/refund', res, { httpsAgent: this.bin.httpsAgent })
+    const body = await this.bin.toSignedXmlParams(param)
+    return await this.bin.post('/secapi/pay/refund', body, { httpsAgent: this.bin.httpsAgent })
   }
 
   // 查询订单状态
@@ -81,13 +81,13 @@ export class CoaWxPayIsvService {
     const param = {
       appid: this.bin.config.appId,
       mch_id: this.bin.config.mchId,
-      nonce_str: this.bin.createNonceStr(),
+      nonce_str: this.bin.generateNonceString(),
       sub_appid: data.appWxaId || die.missing('appWxaId'),
       sub_mch_id: data.subMchId || die.missing('subMchId'),
       out_trade_no: data.orderId || die.missing('orderId'),
     }
-    const res = await this.bin.attachSignature(param)
-    return await this.bin.post('/pay/orderquery', res)
+    const body = await this.bin.toSignedXmlParams(param)
+    return await this.bin.post('/pay/orderquery', body)
   }
 
   // 查询订单退款状态
@@ -95,14 +95,14 @@ export class CoaWxPayIsvService {
     const param = {
       appid: this.bin.config.appId,
       mch_id: this.bin.config.mchId,
-      nonce_str: this.bin.createNonceStr(),
+      nonce_str: this.bin.generateNonceString(),
       sub_appid: data.appWxaId || die.missing('appWxaId'),
       sub_mch_id: data.subMchId || die.missing('subMchId'),
       out_trade_no: data.orderId || die.missing('orderId'),
       out_refund_no: data.refundId || die.missing('refundId'),
     }
-    const res = await this.bin.attachSignature(param)
-    return await this.bin.post('/pay/refundquery', res)
+    const body = await this.bin.toSignedXmlParams(param)
+    return await this.bin.post('/pay/refundquery', body)
   }
 
   // 下载账单
@@ -110,12 +110,12 @@ export class CoaWxPayIsvService {
     const param = {
       appid: this.bin.config.appId,
       mch_id: this.bin.config.mchId,
-      nonce_str: this.bin.createNonceStr(),
+      nonce_str: this.bin.generateNonceString(),
       bill_date: date || die.missing('date'),
       bill_type: 'ALL',
     }
-    const res = await this.bin.attachSignature(param)
-    return await this.bin.post('/pay/downloadbill', res, { maxBodyLength: 1024 * 1024 * 1024, maxRedirects: 1024 * 1024 * 1024 })
+    const body = await this.bin.toSignedXmlParams(param)
+    return await this.bin.post('/pay/downloadbill', body, { maxBodyLength: 1024 * 1024 * 1024, maxRedirects: 1024 * 1024 * 1024 })
   }
 
 }

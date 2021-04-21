@@ -5,7 +5,7 @@ import { xml } from 'coa-xml'
 import { Agent } from 'https'
 import { CoaWxPayIsv } from '../typings'
 
-const baseURL = 'https://api.mch.weixin.qq.com/'
+const baseURL = 'https://api.mch.weixin.qq.com'
 
 interface Dic<T = any> {
   [key: string]: any
@@ -22,6 +22,7 @@ export class CoaWxPayIsvBin {
     this.httpsAgent = new Agent({ pfx: config.pfx, passphrase: config.mchId })
   }
 
+  // 生成签名
   generateSignature (object: Dic) {
     const paramList: any[] = []
     _.forEach(object, (v, k) => {
@@ -33,20 +34,24 @@ export class CoaWxPayIsvBin {
     return secure.md5(paramString).toUpperCase()
   }
 
-  createNonceStr () {
+  // 生成随机字符串
+  generateNonceString () {
     return Math.random().toString(36).substr(2, 15)
   }
 
-  async attachSignature (param: Dic, signName = 'sign') {
+  // 转换为已经签名的XML参数
+  async toSignedXmlParams (param: Dic, signName = 'sign') {
     param[signName] = this.generateSignature(param)
     return await xml.encode(param)
   }
 
+  // 进行post请求
   async post (url: string, data: Dic | string, config: Axios.AxiosRequestConfig = {}) {
     const res = await axios({ url, data, baseURL, method: 'POST', ...config })
     return await this.responseResult(res)
   }
 
+  // 处理响应结果
   private async responseResult (res: Axios.AxiosResponse) {
     const text = res.data as string || ''
     if (!text) die.error('微信支付服务器数据异常')
