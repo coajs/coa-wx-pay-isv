@@ -1,32 +1,5 @@
-# coa-wx-pay-isv
-
-[![GitHub license](https://img.shields.io/badge/license-MIT-green.svg?style=flat-square)](LICENSE)
-[![npm version](https://img.shields.io/npm/v/coa-wx-pay-isv.svg?style=flat-square)](https://www.npmjs.org/package/coa-wx-pay-isv)
-[![npm downloads](https://img.shields.io/npm/dm/coa-wx-pay-isv.svg?style=flat-square)](http://npm-stat.com/charts.html?package=coa-wx-pay-isv)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/coajs/coa-wx-pay-isv/pulls)
-
-轻量的微信支付SDK服务商版 for Node.js
-
-## 特点
-
-根据日常实际项目使用情况：
-
-- 覆盖了绝大多数使用场景
-- 统一了异步表现形式，全部返回 Promise
-- 内置类型引用，无需额外查看文档，开箱即用，IDE友好
-
-## 快速开始
-
-### 安装
-
-```shell
-yarn add coa-wx-pay-isv
-```
-
-### 直接使用
-
-```typescript
-import { CoaWxPayIsvBin, CoaWxPayIsvService } from 'coa-wx-pay-isv'
+// @ts-nocheck
+import { CoaWxPayIsvBin, CoaWxPayIsvService } from '..'
 
 // 微信支付配置
 const config = {
@@ -61,4 +34,3 @@ await service.queryRefund({ refundId: 'refund000001', orderId: 'order000001', ap
 
 // 下载日对账单
 await service.downloadBill({ date: '20210331' })
-```

@@ -21,9 +21,9 @@
   },
   "scripts": {
     "dev": "tsc -w",
-    "build": "rm -rf dist && tsc && cp package.json *.md dist",
+    "build": "rm -rf dist && tsc && cp package.json *.md dist && rm -rf dist/test",
     "sync": "curl -X PUT 'https://npm.taobao.org/sync/coa-wx-pay-isv?sync_upstream=true'",
-    "publish-prerelease": "yarn build && yarn version --prerelease && cp package.json README.md dist && cd dist && npm publish"
+    "publish-prerelease": "yarn build && yarn version --prerelease && cp package.json *.md dist && cd dist && rm -rf test && npm publish"
   },
   "dependencies": {
     "coa-error": "^1.1.3",
