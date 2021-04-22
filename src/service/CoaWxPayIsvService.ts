@@ -20,9 +20,10 @@ export class CoaWxPayIsvService {
   }
 
   // 获取支付参数
-  getPaymentParams (appWxaId: string, prepayId: string) {
+  getPaymentParams (data: { appWxaId: string, prepayId: string }) {
+    const prepayId = data.prepayId || die.missing('prepayId')
     const param: any = {
-      appId: appWxaId,
+      appId: data.appWxaId || die.missing('appWxaId'),
       timeStamp: _.toString(_.toInteger(_.now() / 1000)),
       nonceStr: this.bin.generateNonceString(),
       signType: 'MD5',
@@ -106,12 +107,12 @@ export class CoaWxPayIsvService {
   }
 
   // 下载账单
-  async downloadBill (date: string) {
+  async downloadBill (data: { date: string }) {
     const param = {
       appid: this.bin.config.appId,
       mch_id: this.bin.config.mchId,
       nonce_str: this.bin.generateNonceString(),
-      bill_date: date || die.missing('date'),
+      bill_date: data.date || die.missing('date'),
       bill_type: 'ALL',
     }
     const body = await this.bin.toSignedXmlParams(param)
