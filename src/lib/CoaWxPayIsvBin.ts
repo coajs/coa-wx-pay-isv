@@ -47,20 +47,20 @@ export class CoaWxPayIsvBin {
   // 进行post请求
   async post (url: string, data: Dic | string, config: Axios.AxiosRequestConfig = {}) {
     const res = await axios({ url, data, baseURL, method: 'POST', ...config }).catch(e => e)
+    // 处理结果
     try {
-      return await this.responseResult(res)
+      return await this.handleResult(res)
     } catch (e) {
-      this.onResponseError(e, res)
+      this.onRequestError(e, res)
       throw e
     }
   }
 
-  protected onResponseError (e: Error, res: Axios.AxiosResponse) {
-
+  protected onRequestError (error: Error, response: Axios.AxiosResponse) {
   }
 
   // 处理响应结果
-  private async responseResult (res: Axios.AxiosResponse) {
+  private async handleResult (res: Axios.AxiosResponse) {
     const text = res.data as string || ''
     if (!text) CoaError.throw('CoaWxPayIsv.ServeCallError', '微信支付服务器数据异常')
     if (!text.startsWith('<xml')) return text
