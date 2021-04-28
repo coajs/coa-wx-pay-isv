@@ -34,3 +34,15 @@ await service.queryRefund({ refundId: 'refund000001', orderId: 'order000001', ap
 
 // 下载日对账单
 await service.downloadBill({ date: '20210331' })
+
+
+// 创建自定义BIN类
+class MyCoaWxPayIsvBin extends CoaWxPayIsvBin {
+  protected onRequestError (error: Error, response: Axios.AxiosResponse) {
+    console.log('error:', error.toString())
+    console.log('data:', response.data)
+  }
+}
+
+// 自定义BIN实例
+const bin = new MyCoaWxPayIsvBin(config)

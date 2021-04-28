@@ -62,3 +62,38 @@ await service.queryRefund({ refundId: 'refund000001', orderId: 'order000001', ap
 // 下载日对账单
 await service.downloadBill({ date: '20210331' })
 ```
+
+### 错误记录
+
+可以使用自定义Bin的方式记录错误信息。
+
+```typescript
+import { CoaWxPayIsvBin, CoaWxPayIsvService } from 'coa-wx-pay-isv'
+
+// 微信支付配置
+const config = {
+  appId: 'wx00000000001',
+  mchId: '1550000001',
+  key: '1125XXXXXXXXXXXXXXXXXXX6E20DE9',
+  pfx: Buffer.from('XXXXXXX'),
+  notifyPay: 'https://example.com/api/notify/pay',
+  notifyRefund: 'https://example.com/api/notify/refund'
+}
+
+// 创建自定义Bin类
+class MyCoaWxPayIsvBin extends CoaWxPayIsvBin {
+  protected onRequestError (error: Error, response: Axios.AxiosResponse) {
+    console.log('error:', error.toString())
+    console.log('data:', response.data)
+  }
+}
+
+// 自定义Bin实例
+const bin = new MyCoaWxPayIsvBin(config)
+
+// 是自定义bin创建服务
+const service = new CoaWxPayIsvService(bin)
+
+// 错误调用下载日对账单
+await service.downloadBill({ date: '' }) // 此时会触发 onRequestError()
+```
