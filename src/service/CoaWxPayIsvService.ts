@@ -1,4 +1,4 @@
-import { die } from 'coa-error'
+import { CoaError } from 'coa-error'
 import { _ } from 'coa-helper'
 import { secure } from 'coa-secure'
 import { xml } from 'coa-xml'
@@ -21,9 +21,9 @@ export class CoaWxPayIsvService {
 
   // 获取支付参数
   getPaymentParams (data: { appWxaId: string, prepayId: string }) {
-    const prepayId = data.prepayId || die.missing('prepayId')
+    const prepayId = data.prepayId || CoaError.message('CoaWxPayIsv.MissingField', '缺少prepayId')
     const param: any = {
-      appId: data.appWxaId || die.missing('appWxaId'),
+      appId: data.appWxaId || CoaError.message('CoaWxPayIsv.MissingField', '缺少appWxaId'),
       timeStamp: _.toString(_.toInteger(_.now() / 1000)),
       nonceStr: this.bin.generateNonceString(),
       signType: 'MD5',
@@ -41,12 +41,12 @@ export class CoaWxPayIsvService {
       appid: this.bin.config.appId,
       mch_id: this.bin.config.mchId,
       nonce_str: this.bin.generateNonceString(),
-      sub_appid: data.appWxaId || die.missing('appWxaId'),
-      sub_mch_id: data.subMchId || die.missing('subMchId'),
-      sub_openid: data.openId || die.missing('openId'),
+      sub_appid: data.appWxaId || CoaError.message('CoaWxPayIsv.MissingField', '缺少appWxaId'),
+      sub_mch_id: data.subMchId || CoaError.message('CoaWxPayIsv.MissingField', '缺少subMchId'),
+      sub_openid: data.openId || CoaError.message('CoaWxPayIsv.MissingField', '缺少openId'),
       body: '订单' + data.orderId,
-      out_trade_no: data.orderId || die.missing('orderId'),
-      total_fee: data.price || die.missing('order price'),
+      out_trade_no: data.orderId || CoaError.message('CoaWxPayIsv.MissingField', '缺少orderId'),
+      total_fee: data.price || CoaError.message('CoaWxPayIsv.MissingField', '缺少order price'),
       spbill_create_ip: '1.1.1.1',
       notify_url: `${this.bin.config.notifyPay}.${data.orderId}`,
       trade_type: 'JSAPI',
@@ -57,17 +57,17 @@ export class CoaWxPayIsvService {
 
   // 退款
   async payRefund (data: { refundId: string, orderId: string, price: number, rawData: any }) {
-    const rawData = data.rawData || die.hint('数据不存在')
-    const refundId = data.refundId || die.hint('缺少退款ID')
-    const orderId = data.orderId || die.hint('缺少订单ID')
-    const price = data.price || die.hint('缺少价格')
+    const rawData = data.rawData || CoaError.message('CoaWxPayIsv.MissingField', '数据不存在')
+    const refundId = data.refundId || CoaError.message('CoaWxPayIsv.MissingField', '缺少退款ID')
+    const orderId = data.orderId || CoaError.message('CoaWxPayIsv.MissingField', '缺少订单ID')
+    const price = data.price || CoaError.message('CoaWxPayIsv.MissingField', '缺少价格')
     const param = {
       appid: this.bin.config.appId,
       mch_id: this.bin.config.mchId,
       nonce_str: this.bin.generateNonceString(),
-      sub_appid: rawData.subAppid || rawData.sub_appid || die.hint('缺少rawData.subAppid，暂时无法退款'),
-      sub_mch_id: rawData.subMchId || rawData.sub_mch_id || die.hint('缺少rawData.subMchId，暂时无法退款'),
-      out_trade_no: rawData.outTradeNo || rawData.out_trade_no || die.hint('缺少rawData.outTradeNo，暂时无法退款'),
+      sub_appid: rawData.subAppid || rawData.sub_appid || CoaError.message('CoaWxPayIsv.MissingField', '缺少rawData.subAppid，暂时无法退款'),
+      sub_mch_id: rawData.subMchId || rawData.sub_mch_id || CoaError.message('CoaWxPayIsv.MissingField', '缺少rawData.subMchId，暂时无法退款'),
+      out_trade_no: rawData.outTradeNo || rawData.out_trade_no || CoaError.message('CoaWxPayIsv.MissingField', '缺少rawData.outTradeNo，暂时无法退款'),
       out_refund_no: refundId,
       total_fee: price,
       refund_fee: price,
@@ -83,9 +83,9 @@ export class CoaWxPayIsvService {
       appid: this.bin.config.appId,
       mch_id: this.bin.config.mchId,
       nonce_str: this.bin.generateNonceString(),
-      sub_appid: data.appWxaId || die.missing('appWxaId'),
-      sub_mch_id: data.subMchId || die.missing('subMchId'),
-      out_trade_no: data.orderId || die.missing('orderId'),
+      sub_appid: data.appWxaId || CoaError.message('CoaWxPayIsv.MissingField', '缺少appWxaId'),
+      sub_mch_id: data.subMchId || CoaError.message('CoaWxPayIsv.MissingField', '缺少subMchId'),
+      out_trade_no: data.orderId || CoaError.message('CoaWxPayIsv.MissingField', '缺少orderId'),
     }
     const body = await this.bin.toSignedXmlParams(param)
     return await this.bin.post('/pay/orderquery', body)
@@ -97,10 +97,10 @@ export class CoaWxPayIsvService {
       appid: this.bin.config.appId,
       mch_id: this.bin.config.mchId,
       nonce_str: this.bin.generateNonceString(),
-      sub_appid: data.appWxaId || die.missing('appWxaId'),
-      sub_mch_id: data.subMchId || die.missing('subMchId'),
-      out_trade_no: data.orderId || die.missing('orderId'),
-      out_refund_no: data.refundId || die.missing('refundId'),
+      sub_appid: data.appWxaId || CoaError.message('CoaWxPayIsv.MissingField', '缺少appWxaId'),
+      sub_mch_id: data.subMchId || CoaError.message('CoaWxPayIsv.MissingField', '缺少subMchId'),
+      out_trade_no: data.orderId || CoaError.message('CoaWxPayIsv.MissingField', '缺少orderId'),
+      out_refund_no: data.refundId || CoaError.message('CoaWxPayIsv.MissingField', '缺少refundId'),
     }
     const body = await this.bin.toSignedXmlParams(param)
     return await this.bin.post('/pay/refundquery', body)
@@ -112,7 +112,7 @@ export class CoaWxPayIsvService {
       appid: this.bin.config.appId,
       mch_id: this.bin.config.mchId,
       nonce_str: this.bin.generateNonceString(),
-      bill_date: data.date || die.missing('date'),
+      bill_date: data.date || CoaError.message('CoaWxPayIsv.MissingField', '缺少date'),
       bill_type: 'ALL',
     }
     const body = await this.bin.toSignedXmlParams(param)

@@ -1,4 +1,4 @@
-import { die } from 'coa-error'
+import { CoaError } from 'coa-error'
 import { $, axios, Axios, _ } from 'coa-helper'
 import { secure } from 'coa-secure'
 import { xml } from 'coa-xml'
@@ -12,7 +12,6 @@ interface Dic<T = any> {
 }
 
 export class CoaWxPayIsvBin {
-
 
   public readonly config: CoaWxPayIsv.Config
   public readonly httpsAgent: Agent
@@ -47,18 +46,27 @@ export class CoaWxPayIsvBin {
 
   // 进行post请求
   async post (url: string, data: Dic | string, config: Axios.AxiosRequestConfig = {}) {
-    const res = await axios({ url, data, baseURL, method: 'POST', ...config })
-    return await this.responseResult(res)
+    const res = await axios({ url, data, baseURL, method: 'POST', ...config }).catch(e => e)
+    try {
+      return await this.responseResult(res)
+    } catch (e) {
+      this.onResponseError(e, res)
+      throw e
+    }
+  }
+
+  protected onResponseError (e: Error, res: Axios.AxiosResponse) {
+
   }
 
   // 处理响应结果
   private async responseResult (res: Axios.AxiosResponse) {
     const text = res.data as string || ''
-    if (!text) die.error('微信支付服务器数据异常')
+    if (!text) CoaError.throw('CoaWxPayIsv.ServeCallError', '微信支付服务器数据异常')
     if (!text.startsWith('<xml')) return text
     const info: any = await xml.decode(text)
-    info.return_code === 'SUCCESS' || die.error(info.return_msg)
-    info.result_code === 'SUCCESS' || die.error(info.err_code + ':' + info.err_code_des)
+    info.return_code === 'SUCCESS' || CoaError.throw('CoaWxPayIsv.ServeReturnError', info.return_msg)
+    info.result_code === 'SUCCESS' || CoaError.throw('CoaWxPayIsv.ServeResultError', info.err_code + ':' + info.err_code_des)
     return $.camelCaseKeys(info)
   }
 }
