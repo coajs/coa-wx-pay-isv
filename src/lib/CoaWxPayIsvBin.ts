@@ -8,7 +8,7 @@ import { CoaWxPayIsv } from '../typings'
 const baseURL = 'https://api.mch.weixin.qq.com'
 
 interface Dic<T = any> {
-  [key: string]: any
+  [key: string]: T
 }
 
 export class CoaWxPayIsvBin {
