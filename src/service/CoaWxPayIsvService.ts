@@ -5,22 +5,21 @@ import { xml } from 'coa-xml'
 import { CoaWxPayIsvBin } from '../lib/CoaWxPayIsvBin'
 
 export class CoaWxPayIsvService {
-
   private readonly bin: CoaWxPayIsvBin
 
-  constructor (bin: CoaWxPayIsvBin) {
+  constructor(bin: CoaWxPayIsvBin) {
     this.bin = bin
   }
 
   // 解码微信返回的信息
-  async decodeInfo (encodeString: string) {
+  async decodeInfo(encodeString: string) {
     const keyDecode = secure.md5(this.bin.config.key)
     const xmlData = secure.aes_decode(encodeString, keyDecode)
-    return await xml.decode(xmlData) || {}
+    return (await xml.decode(xmlData)) || {}
   }
 
   // 获取支付参数
-  getPaymentParams (data: { appWxaId: string, prepayId: string }) {
+  getPaymentParams(data: { appWxaId: string; prepayId: string }) {
     const prepayId = data.prepayId || CoaError.message('CoaWxPayIsv.MissingField', '缺少prepayId')
     const param: any = {
       appId: data.appWxaId || CoaError.message('CoaWxPayIsv.MissingField', '缺少appWxaId'),
@@ -36,7 +35,7 @@ export class CoaWxPayIsvService {
   }
 
   // 微信支付统一下单
-  async unifiedOrder (data: { orderId: string, price: number, appWxaId: string, subMchId: string, openId: string }) {
+  async unifiedOrder(data: { orderId: string; price: number; appWxaId: string; subMchId: string; openId: string }) {
     const param = {
       appid: this.bin.config.appId,
       mch_id: this.bin.config.mchId,
@@ -56,7 +55,7 @@ export class CoaWxPayIsvService {
   }
 
   // 退款
-  async payRefund (data: { refundId: string, orderId: string, price: number, rawData: any }) {
+  async payRefund(data: { refundId: string; orderId: string; price: number; rawData: any }) {
     const rawData = data.rawData || CoaError.message('CoaWxPayIsv.MissingField', '数据不存在')
     const refundId = data.refundId || CoaError.message('CoaWxPayIsv.MissingField', '缺少退款ID')
     const orderId = data.orderId || CoaError.message('CoaWxPayIsv.MissingField', '缺少订单ID')
@@ -71,14 +70,14 @@ export class CoaWxPayIsvService {
       out_refund_no: refundId,
       total_fee: price,
       refund_fee: price,
-      notify_url: `${this.bin.config.notifyRefund}.${orderId}`
+      notify_url: `${this.bin.config.notifyRefund}.${orderId}`,
     }
     const body = await this.bin.toSignedXmlParams(param)
     return await this.bin.post('/secapi/pay/refund', body, { httpsAgent: this.bin.httpsAgent })
   }
 
   // 查询订单状态
-  async queryOrder (data: { orderId: string, appWxaId: string, subMchId: string }) {
+  async queryOrder(data: { orderId: string; appWxaId: string; subMchId: string }) {
     const param = {
       appid: this.bin.config.appId,
       mch_id: this.bin.config.mchId,
@@ -92,7 +91,7 @@ export class CoaWxPayIsvService {
   }
 
   // 查询订单退款状态
-  async queryRefund (data: { orderId: string, refundId: string, appWxaId: string, subMchId: string }) {
+  async queryRefund(data: { orderId: string; refundId: string; appWxaId: string; subMchId: string }) {
     const param = {
       appid: this.bin.config.appId,
       mch_id: this.bin.config.mchId,
@@ -107,7 +106,7 @@ export class CoaWxPayIsvService {
   }
 
   // 下载账单
-  async downloadBill (data: { date: string }) {
+  async downloadBill(data: { date: string }) {
     const param = {
       appid: this.bin.config.appId,
       mch_id: this.bin.config.mchId,
@@ -118,5 +117,4 @@ export class CoaWxPayIsvService {
     const body = await this.bin.toSignedXmlParams(param)
     return await this.bin.post('/pay/downloadbill', body, { maxBodyLength: 1024 * 1024 * 1024, maxRedirects: 1024 * 1024 * 1024 })
   }
-
 }

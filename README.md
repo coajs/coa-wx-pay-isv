@@ -5,7 +5,7 @@
 [![npm downloads](https://img.shields.io/npm/dm/coa-wx-pay-isv.svg?style=flat-square)](http://npm-stat.com/charts.html?package=coa-wx-pay-isv)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/coajs/coa-wx-pay-isv/pulls)
 
-轻量的微信支付SDK服务商版 for Node.js
+轻量的微信支付 SDK 服务商版 for Node.js
 
 ## 特点
 
@@ -13,7 +13,7 @@
 
 - 覆盖了绝大多数使用场景
 - 统一了异步表现形式，全部返回 Promise
-- 内置类型引用，无需额外查看文档，开箱即用，IDE友好
+- 内置类型引用，无需额外查看文档，开箱即用，IDE 友好
 
 ## 快速开始
 
@@ -35,7 +35,7 @@ const config = {
   key: '1125XXXXXXXXXXXXXXXXXXX6E20DE9',
   pfx: Buffer.from('XXXXXXX'),
   notifyPay: 'https://example.com/api/notify/pay',
-  notifyRefund: 'https://example.com/api/notify/refund'
+  notifyRefund: 'https://example.com/api/notify/refund',
 }
 
 // 创建BIN实例
@@ -65,7 +65,7 @@ await service.downloadBill({ date: '20210331' })
 
 ### 错误记录
 
-可以使用自定义Bin的方式记录错误信息。
+可以使用自定义 Bin 的方式记录错误信息。
 
 ```typescript
 import { CoaWxPayIsvBin, CoaWxPayIsvService } from 'coa-wx-pay-isv'
@@ -77,12 +77,12 @@ const config = {
   key: '1125XXXXXXXXXXXXXXXXXXX6E20DE9',
   pfx: Buffer.from('XXXXXXX'),
   notifyPay: 'https://example.com/api/notify/pay',
-  notifyRefund: 'https://example.com/api/notify/refund'
+  notifyRefund: 'https://example.com/api/notify/refund',
 }
 
 // 创建自定义Bin类
 class MyCoaWxPayIsvBin extends CoaWxPayIsvBin {
-  protected onRequestError (error: Error, response: Axios.AxiosResponse) {
+  protected onRequestError(error: Error, response: Axios.AxiosResponse) {
     console.log('error:', error.toString())
     console.log('data:', response.data)
   }

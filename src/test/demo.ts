@@ -8,7 +8,7 @@ const config = {
   key: '1125XXXXXXXXXXXXXXXXXXX6E20DE9',
   pfx: Buffer.from('XXXXXXX'),
   notifyPay: 'https://example.com/api/notify/pay',
-  notifyRefund: 'https://example.com/api/notify/refund'
+  notifyRefund: 'https://example.com/api/notify/refund',
 }
 
 // 创建BIN实例
@@ -35,14 +35,15 @@ await service.queryRefund({ refundId: 'refund000001', orderId: 'order000001', ap
 // 下载日对账单
 await service.downloadBill({ date: '20210331' })
 
-
 // 创建自定义BIN类
 class MyCoaWxPayIsvBin extends CoaWxPayIsvBin {
-  protected onRequestError (error: Error, response: Axios.AxiosResponse) {
-    console.log('error:', error.toString())
+  protected onRequestError(error: Error, response: Axios.AxiosResponse) {
+    console.log('error:', error)
     console.log('data:', response.data)
   }
 }
 
 // 自定义BIN实例
-const bin = new MyCoaWxPayIsvBin(config)
+const myBin = new MyCoaWxPayIsvBin(config)
+
+console.log(myBin.config)
