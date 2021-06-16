@@ -55,11 +55,12 @@ export class CoaWxPayIsvService {
   }
 
   // 退款
-  async payRefund(data: { refundId: string; orderId: string; price: number; rawData: any }) {
+  async payRefund(data: { refundId: string; orderId: string; totalPrice: number; refundPrice: number; rawData: any }) {
     const rawData = data.rawData || CoaError.message('CoaWxPayIsv.MissingField', '数据不存在')
     const refundId = data.refundId || CoaError.message('CoaWxPayIsv.MissingField', '缺少退款ID')
     const orderId = data.orderId || CoaError.message('CoaWxPayIsv.MissingField', '缺少订单ID')
-    const price = data.price || CoaError.message('CoaWxPayIsv.MissingField', '缺少价格')
+    const totalPrice = data.totalPrice || CoaError.message('CoaWxPayIsv.MissingField', '缺少总价格')
+    const refundPrice = data.refundPrice || CoaError.message('CoaWxPayIsv.MissingField', '缺少退款价格')
     const param = {
       appid: this.bin.config.appId,
       mch_id: this.bin.config.mchId,
@@ -68,8 +69,8 @@ export class CoaWxPayIsvService {
       sub_mch_id: rawData.subMchId || rawData.sub_mch_id || CoaError.message('CoaWxPayIsv.MissingField', '缺少rawData.subMchId，暂时无法退款'),
       out_trade_no: rawData.outTradeNo || rawData.out_trade_no || CoaError.message('CoaWxPayIsv.MissingField', '缺少rawData.outTradeNo，暂时无法退款'),
       out_refund_no: refundId,
-      total_fee: price,
-      refund_fee: price,
+      total_fee: totalPrice,
+      refund_fee: refundPrice,
       notify_url: `${this.bin.config.notifyRefund}.${orderId}`,
     }
     const body = await this.bin.toSignedXmlParams(param)
