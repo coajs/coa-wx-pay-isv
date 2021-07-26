@@ -35,7 +35,7 @@ export class CoaWxPayIsvService {
   }
 
   // 微信支付统一下单
-  async unifiedOrder(data: { orderId: string; price: number; appWxaId: string; subMchId: string; openId: string }) {
+  async unifiedOrder(data: { orderId: string; price: number; appWxaId: string; subMchId: string; openId: string; body: string }) {
     const param = {
       appid: this.bin.config.appId,
       mch_id: this.bin.config.mchId,
@@ -43,7 +43,7 @@ export class CoaWxPayIsvService {
       sub_appid: data.appWxaId || CoaError.message('CoaWxPayIsv.MissingField', '缺少appWxaId'),
       sub_mch_id: data.subMchId || CoaError.message('CoaWxPayIsv.MissingField', '缺少subMchId'),
       sub_openid: data.openId || CoaError.message('CoaWxPayIsv.MissingField', '缺少openId'),
-      body: '订单' + data.orderId,
+      body: data.body || '订单' + data.orderId,
       out_trade_no: data.orderId || CoaError.message('CoaWxPayIsv.MissingField', '缺少orderId'),
       total_fee: data.price || CoaError.message('CoaWxPayIsv.MissingField', '缺少order price'),
       spbill_create_ip: '1.1.1.1',
