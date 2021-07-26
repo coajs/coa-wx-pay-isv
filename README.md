@@ -45,7 +45,7 @@ const bin = new CoaWxPayIsvBin(config)
 const service = new CoaWxPayIsvService(bin)
 
 // 统一下单
-await service.unifiedOrder({ orderId: 'order000001', appWxaId: 'wx000000002', subMchId: '1660000001', openId: 'openIdxxxxxxx', price: 100 })
+await service.unifiedOrder({ orderId: 'order000001', appWxaId: 'wx000000002', subMchId: '1660000001', openId: 'openIdxxxxxxx', price: 100, body: '商品信息' })
 
 // 根据预支付单号，获得支付参数
 await service.getPaymentParams({ appWxaId: 'wx000000002', prepayId: 'prepay00001' })
