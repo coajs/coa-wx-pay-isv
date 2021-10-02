@@ -44,7 +44,11 @@ export class CoaWxPayIsvBin {
   }
 
   // 进行post请求
-  async post(url: string, data: Dic | string, config: Axios.AxiosRequestConfig = {}) {
+  async post(
+    url: string,
+    data: Dic | string,
+    config: Axios.AxiosRequestConfig = {}
+  ) {
     const res = await axios({
       url,
       data,
@@ -69,11 +73,17 @@ export class CoaWxPayIsvBin {
   // 处理响应结果
   private async handleResult(res: Axios.AxiosResponse) {
     const text = (res.data as string) || ''
-    if (!text) CoaError.throw('CoaWxPayIsv.ServeCallError', '微信支付服务器数据异常')
+    if (!text)
+      CoaError.throw('CoaWxPayIsv.ServeCallError', '微信支付服务器数据异常')
     if (!text.startsWith('<xml')) return text
     const info: any = await xml.decode(text)
-    info.return_code === 'SUCCESS' || CoaError.throw('CoaWxPayIsv.ServeReturnError', info.return_msg)
-    info.result_code === 'SUCCESS' || CoaError.throw('CoaWxPayIsv.ServeResultError', info.err_code + ':' + info.err_code_des)
+    info.return_code === 'SUCCESS' ||
+      CoaError.throw('CoaWxPayIsv.ServeReturnError', info.return_msg)
+    info.result_code === 'SUCCESS' ||
+      CoaError.throw(
+        'CoaWxPayIsv.ServeResultError',
+        info.err_code + ':' + info.err_code_des
+      )
     return $.camelCaseKeys(info)
   }
 }
