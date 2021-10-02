@@ -45,7 +45,13 @@ export class CoaWxPayIsvBin {
 
   // 进行post请求
   async post(url: string, data: Dic | string, config: Axios.AxiosRequestConfig = {}) {
-    const res = await axios({ url, data, baseURL, method: 'POST', ...config }).catch((e) => e)
+    const res = await axios({
+      url,
+      data,
+      baseURL,
+      method: 'POST',
+      ...config,
+    }).catch((e) => e)
     // 处理结果
     try {
       return await this.handleResult(res)
@@ -55,7 +61,10 @@ export class CoaWxPayIsvBin {
     }
   }
 
-  protected onRequestError(_error: Error, response: Axios.AxiosResponse) {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected onRequestError(error: Error, response: Axios.AxiosResponse) {
+    // handle request error
+  }
 
   // 处理响应结果
   private async handleResult(res: Axios.AxiosResponse) {
