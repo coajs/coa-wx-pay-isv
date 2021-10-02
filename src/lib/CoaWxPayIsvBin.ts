@@ -59,7 +59,7 @@ export class CoaWxPayIsvBin {
     // 处理结果
     try {
       return await this.handleResult(res)
-    } catch (e) {
+    } catch (e: any) {
       this.onRequestError(e, res)
       throw e
     }
