@@ -19,6 +19,7 @@ const service = new CoaWxPayIsvService(bin)
 
 // 统一下单
 await service.unifiedOrder({
+  accountId: 'account000001',
   orderId: 'order000001',
   appWxaId: 'wx000000002',
   subMchId: '1660000001',
@@ -41,6 +42,7 @@ await service.queryOrder({
 
 // 退款
 await service.payRefund({
+  accountId: 'account000001',
   refundId: 'refund000001',
   orderId: 'order000001',
   price: 100,
