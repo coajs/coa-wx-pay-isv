@@ -40,6 +40,7 @@ export class CoaWxPayIsvService {
 
   // 微信支付统一下单
   async unifiedOrder(data: {
+    accountId: string
     orderId: string
     price: number
     appWxaId: string
@@ -68,7 +69,7 @@ export class CoaWxPayIsvService {
         data.price ||
         CoaError.message('CoaWxPayIsv.MissingField', '缺少order price'),
       spbill_create_ip: '1.1.1.1',
-      notify_url: `${this.bin.config.notifyPay}.${data.orderId}`,
+      notify_url: `${this.bin.config.notifyPay}.${data.accountId || CoaError.message('CoaWxPayIsv.MissingField', '缺少accountId')}.${data.orderId}`,
       trade_type: 'JSAPI',
     }
     const body = await this.bin.toSignedXmlParams(param)
@@ -77,6 +78,7 @@ export class CoaWxPayIsvService {
 
   // 退款
   async payRefund(data: {
+    accountId: string
     refundId: string
     orderId: string
     totalPrice: number
@@ -85,6 +87,8 @@ export class CoaWxPayIsvService {
   }) {
     const rawData =
       data.rawData || CoaError.message('CoaWxPayIsv.MissingField', '数据不存在')
+    const accountId =
+      data.accountId || CoaError.message('CoaWxPayIsv.MissingField', '缺少账户ID')
     const refundId =
       data.refundId ||
       CoaError.message('CoaWxPayIsv.MissingField', '缺少退款ID')
@@ -96,6 +100,7 @@ export class CoaWxPayIsvService {
     const refundPrice =
       data.refundPrice ||
       CoaError.message('CoaWxPayIsv.MissingField', '缺少退款价格')
+
     const param = {
       appid: this.bin.config.appId,
       mch_id: this.bin.config.mchId,
@@ -124,7 +129,7 @@ export class CoaWxPayIsvService {
       out_refund_no: refundId,
       total_fee: totalPrice,
       refund_fee: refundPrice,
-      notify_url: `${this.bin.config.notifyRefund}.${orderId}`,
+      notify_url: `${this.bin.config.notifyRefund}.${accountId}.${orderId}`,
     }
     const body = await this.bin.toSignedXmlParams(param)
     return await this.bin.post('/secapi/pay/refund', body, {
